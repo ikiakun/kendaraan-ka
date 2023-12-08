@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('riwayat_cadangans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('kendaraan_spesifikasi_id')->constrained('kendaraan_spesifikasis')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->date('tgl');
+            $table->string('alasan');
+            $table->string('keterangan');
             $table->timestamps();
         });
     }

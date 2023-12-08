@@ -21,4 +21,8 @@ class KendaraanSpesifikasi extends Model
     public function kendaraan_jenis() {
         return $this->belongsTo(KendaraanJenis::class);
     }
+
+    public function riwayat_cadangan() {
+        return $this->hasMany(RiwayatCadangan::class);
+    }
 }

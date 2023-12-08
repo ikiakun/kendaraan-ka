@@ -63,4 +63,8 @@ class User extends Authenticatable
     public function kendaraan_spesifikasi() {
         return $this->hasMany(KendaraanSpesifikasi::class);
     }
+
+    public function riwayat_cadangan() {
+        return $this->hasMany(RiwayatCadangan::class);
+    }
 }

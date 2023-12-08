@@ -15,6 +15,7 @@ use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -34,39 +35,47 @@ class DaftarKendaraanResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('driver')
-                ->label('Nama Driver')
-                ->required()
-                ->columnSpan(2),
-
                 TextInput::make('plat_nomor')
-                ->label('Nopol')
-                ->required()
-                ->columnSpan(2)
-                ->unique(),
+                    ->label('Nopol')
+                    ->required()
+                    ->columnSpan(1),
+                // ->unique(),
+
+                TextInput::make('driver')
+                    ->label('Nama Driver')
+                    ->required()
+                    ->columnSpan(1),
 
                 TextInput::make('nomor_rangka')
-                ->label('No. Rangka')
-                ->required()
-                ->columnSpan(2),
+                    ->label('No. Rangka')
+                    ->required()
+                    ->columnSpan(2),
 
                 Select::make('kendaraan_jenis_id')
-                ->relationship('kendaraan_jenis', 'jenis')
-                ->label('Jenis Kendaraan')
-                ->required()
-                ->columnSpan(2),
+                    ->relationship('kendaraan_jenis', 'jenis')
+                    ->label('Jenis Kendaraan')
+                    ->required()
+                    ->columnSpan(1),
+
+                // TextInput::make('tahun')
+                //     ->label('Tahun')
+                //     ->placeholder('Contoh: 2021')
+                //     ->numeric()->minLength(4)->maxLength(4)
+                //     ->required()
+                //     ->columnSpan(1),
+
 
                 DatePicker::make('berlaku_stnk')
-                ->label('Berlaku STNK')
-                ->required(),
+                    ->label('Berlaku STNK')
+                    ->required(),
 
 
                 DatePicker::make('berlaku_kir')
-                ->label('Berlaku KIR')
-                ->required(),
+                    ->label('Berlaku KIR')
+                    ->required(),
 
                 Hidden::make('user_id')
-                ->default(Auth::user()->id)
+                    ->default(Auth::user()->id)
             ]);
     }
 
@@ -75,39 +84,39 @@ class DaftarKendaraanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('driver')
-                ->label('Driver')
-                ->sortable()
-                ->searchable(),
+                    ->label('Driver')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('plat_nomor')
-                ->label('Nopol')
-                ->sortable()
-                ->searchable(),
+                    ->label('Nopol')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('nomor_rangka')
-                ->label('No. Rangka')
-                ->sortable()
-                ->searchable(),
+                    ->label('No. Rangka')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('kendaraan_jenis.jenis')
-                ->label('Jenis')
-                ->sortable()
-                ->searchable(),
+                    ->label('Jenis')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('berlaku_stnk')
-                ->label('Berlaku STNK')
-                ->sortable()
-                ->searchable(),
+                    ->label('Berlaku STNK')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('berlaku_kir')
-                ->label('Berlaku KIR')
-                ->sortable()
-                ->searchable(),
+                    ->label('Berlaku KIR')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('user.name')
-                ->label('Dibuat/diubah oleh')
-                ->sortable()
-                ->searchable(),
+                    ->label('Dibuat/diubah oleh')
+                    ->sortable()
+                    ->searchable(),
 
 
             ])
@@ -116,6 +125,8 @@ class DaftarKendaraanResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                DeleteAction::make(),
+
             ])
             ->bulkActions([
                 BulkActionGroup::make([

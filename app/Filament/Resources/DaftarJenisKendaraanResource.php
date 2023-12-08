@@ -2,21 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DaftarJenisKendaraanResource\Pages;
-use App\Filament\Resources\DaftarJenisKendaraanResource\RelationManagers;
-use App\Models\DaftarJenisKendaraan;
-use App\Models\KendaraanJenis;
 use Filament\Forms;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\KendaraanJenis;
+use Filament\Resources\Resource;
+use App\Models\DaftarJenisKendaraan;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Hidden;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use App\Filament\Resources\DaftarJenisKendaraanResource\Pages;
+use App\Filament\Resources\DaftarJenisKendaraanResource\RelationManagers;
 
 class DaftarJenisKendaraanResource extends Resource
 {
@@ -57,10 +59,13 @@ class DaftarJenisKendaraanResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                DeleteAction::make(),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make(),
                 ]),
             ]);
     }
