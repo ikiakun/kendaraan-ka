@@ -57,13 +57,17 @@ class DaftarKendaraanResource extends Resource
                     ->required()
                     ->columnSpan(1),
 
-                // TextInput::make('tahun')
-                //     ->label('Tahun')
-                //     ->placeholder('Contoh: 2021')
-                //     ->numeric()->minLength(4)->maxLength(4)
-                //     ->required()
-                //     ->columnSpan(1),
+                TextInput::make('tahun')
+                    ->label('Tahun')
+                    ->placeholder('Contoh: 2021')
+                    ->numeric()->minLength(4)->maxLength(4)
+                    ->required()
+                    ->columnSpan(1),
 
+                TextInput::make('atas_nama')
+                    ->label('Atas Nama')
+                    ->placeholder('KAMU - MUKA')
+                    ->columnSpan(1),
 
                 DatePicker::make('berlaku_stnk')
                     ->label('Berlaku STNK')
@@ -100,6 +104,11 @@ class DaftarKendaraanResource extends Resource
 
                 TextColumn::make('kendaraan_jenis.jenis')
                     ->label('Jenis')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('atas_nama')
+                    ->label('Atas Nama')
                     ->sortable()
                     ->searchable(),
 
