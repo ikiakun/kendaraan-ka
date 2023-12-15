@@ -23,23 +23,26 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\DaftarKendaraanResource\Pages;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Resources\DaftarKendaraanResource\RelationManagers;
+use Filament\Forms\Components\Field;
 
 class DaftarKendaraanResource extends Resource
 {
     protected static ?string $model = KendaraanSpesifikasi::class;
     protected static ?string $navigationLabel = 'Daftar Kendaraan';
     protected static ?string $navigationIcon = 'heroicon-o-truck';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Kendaraan';
+    // protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('plat_nomor')
+                ->unique(ignoreRecord: true)
+                    // ->startsWith('AG ')
                     ->label('Nopol')
                     ->required()
                     ->columnSpan(1),
-                // ->unique(),
 
                 TextInput::make('driver')
                     ->label('Nama Driver')
@@ -47,6 +50,7 @@ class DaftarKendaraanResource extends Resource
                     ->columnSpan(1),
 
                 TextInput::make('nomor_rangka')
+                ->unique(ignoreRecord: true)
                     ->label('No. Rangka')
                     ->required()
                     ->columnSpan(2),
@@ -66,7 +70,7 @@ class DaftarKendaraanResource extends Resource
 
                 TextInput::make('atas_nama')
                     ->label('Atas Nama')
-                    ->placeholder('KAMU - MUKA')
+                    ->placeholder('KAMU / MUKA')
                     ->columnSpan(1),
 
                 DatePicker::make('berlaku_stnk')
@@ -104,6 +108,11 @@ class DaftarKendaraanResource extends Resource
 
                 TextColumn::make('kendaraan_jenis.jenis')
                     ->label('Jenis')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('tahun')
+                    ->label('Tahun')
                     ->sortable()
                     ->searchable(),
 
