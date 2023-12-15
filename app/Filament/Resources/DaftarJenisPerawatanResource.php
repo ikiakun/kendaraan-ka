@@ -27,7 +27,9 @@ class DaftarJenisPerawatanResource extends Resource
     protected static ?string $model = PerawatanJenis::class;
     protected static ?string $navigationLabel = 'Daftar Jenis Perawatan';
     protected static ?string $navigationIcon = 'heroicon-o-bars-3-center-left';
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Perawatan';
+
+    // protected static ?int $navigationSort = 3;
 
 
     public static function form(Form $form): Form

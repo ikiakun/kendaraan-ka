@@ -26,7 +26,8 @@ class DaftarJenisKendaraanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-bars-3-bottom-left';
     protected static ?string $navigationLabel = 'Daftar Jenis Kendaraan';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Kendaraan';
+    // protected static ?int $navigationSort = 2;
 
 
     public static function form(Form $form): Form
