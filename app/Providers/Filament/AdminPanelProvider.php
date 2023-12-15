@@ -24,6 +24,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->spa()
+            ->sidebarCollapsibleOnDesktop()
             ->default()
             ->id('admin')
             ->path('admin')
