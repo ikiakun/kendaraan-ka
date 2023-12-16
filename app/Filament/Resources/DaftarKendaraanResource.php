@@ -38,8 +38,7 @@ class DaftarKendaraanResource extends Resource
         return $form
             ->schema([
                 TextInput::make('plat_nomor')
-                ->unique(ignoreRecord: true)
-                    // ->startsWith('AG ')
+                    ->unique(ignoreRecord: true)
                     ->label('Nopol')
                     ->required()
                     ->columnSpan(1),
@@ -50,10 +49,10 @@ class DaftarKendaraanResource extends Resource
                     ->columnSpan(1),
 
                 TextInput::make('nomor_rangka')
-                ->unique(ignoreRecord: true)
-                    ->label('No. Rangka')
+                    ->unique(ignoreRecord: true)
+                    ->label('Rangka No')
                     ->required()
-                    ->columnSpan(2),
+                    ->columnSpan(1),
 
                 Select::make('kendaraan_jenis_id')
                     ->relationship('kendaraan_jenis', 'jenis')
@@ -90,6 +89,7 @@ class DaftarKendaraanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->paginated([50, 100, 'all'])
             ->columns([
                 TextColumn::make('driver')
                     ->label('Driver')
