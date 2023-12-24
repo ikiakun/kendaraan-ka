@@ -71,10 +71,4 @@ return [
 
     'livewire_loading_delay' => 'default',
 
-    'layout' => [
-        'sidebar' => [
-            'is_collapsible_on_desktop' => true,
-        ],
-    ],
-
 ];
