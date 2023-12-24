@@ -23,23 +23,25 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\DaftarKendaraanResource\Pages;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Resources\DaftarKendaraanResource\RelationManagers;
+use Filament\Forms\Components\Field;
 
 class DaftarKendaraanResource extends Resource
 {
     protected static ?string $model = KendaraanSpesifikasi::class;
     protected static ?string $navigationLabel = 'Daftar Kendaraan';
     protected static ?string $navigationIcon = 'heroicon-o-truck';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Kendaraan';
+    // protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('plat_nomor')
+                    ->unique(ignoreRecord: true)
                     ->label('Nopol')
                     ->required()
                     ->columnSpan(1),
-                // ->unique(),
 
                 TextInput::make('driver')
                     ->label('Nama Driver')
@@ -47,9 +49,10 @@ class DaftarKendaraanResource extends Resource
                     ->columnSpan(1),
 
                 TextInput::make('nomor_rangka')
-                    ->label('No. Rangka')
+                    ->unique(ignoreRecord: true)
+                    ->label('Rangka No')
                     ->required()
-                    ->columnSpan(2),
+                    ->columnSpan(1),
 
                 Select::make('kendaraan_jenis_id')
                     ->relationship('kendaraan_jenis', 'jenis')
@@ -57,13 +60,17 @@ class DaftarKendaraanResource extends Resource
                     ->required()
                     ->columnSpan(1),
 
-                // TextInput::make('tahun')
-                //     ->label('Tahun')
-                //     ->placeholder('Contoh: 2021')
-                //     ->numeric()->minLength(4)->maxLength(4)
-                //     ->required()
-                //     ->columnSpan(1),
+                TextInput::make('tahun')
+                    ->label('Tahun')
+                    ->placeholder('Contoh: 2021')
+                    ->numeric()->minLength(4)->maxLength(4)
+                    ->required()
+                    ->columnSpan(1),
 
+                TextInput::make('atas_nama')
+                    ->label('Atas Nama')
+                    ->placeholder('KAMU / MUKA')
+                    ->columnSpan(1),
 
                 DatePicker::make('berlaku_stnk')
                     ->label('Berlaku STNK')
@@ -82,6 +89,7 @@ class DaftarKendaraanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->paginated([50, 100, 'all'])
             ->columns([
                 TextColumn::make('driver')
                     ->label('Driver')
@@ -100,6 +108,16 @@ class DaftarKendaraanResource extends Resource
 
                 TextColumn::make('kendaraan_jenis.jenis')
                     ->label('Jenis')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('tahun')
+                    ->label('Tahun')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('atas_nama')
+                    ->label('Atas Nama')
                     ->sortable()
                     ->searchable(),
 

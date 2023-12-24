@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('plat_nomor');
             $table->string('driver');
             $table->string('nomor_rangka');
-            $table->integer('tahun');
+            $table->integer('tahun')->nullable();
+            // tahun pembuatan
+            $table->string('atas_nama')->nullable();
+            // pemilik kendaraan
             $table->date('berlaku_stnk');
             $table->date('berlaku_kir');
             $table->timestamps();

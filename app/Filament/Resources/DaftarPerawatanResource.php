@@ -36,8 +36,10 @@ class DaftarPerawatanResource extends Resource
 {
     protected static ?string $model = Perawatan::class;
     protected static ?string $navigationLabel = 'Daftar Perawatan';
+    protected static ?string $navigationGroup = 'Perawatan';
 
-    protected static ?int $navigationSort = 4;
+
+    // protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 

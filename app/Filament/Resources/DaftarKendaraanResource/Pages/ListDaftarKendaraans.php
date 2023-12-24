@@ -12,6 +12,7 @@ class ListDaftarKendaraans extends ListRecords
     protected static ?string $title = 'Daftar Kendaraan';
 
 
+    
     protected function getHeaderActions(): array
     {
         return [
