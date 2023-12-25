@@ -10,7 +10,6 @@ use App\Models\Perawatan;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Field;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -25,9 +24,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\DaftarPerawatanResource\Pages;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Resources\DaftarPerawatanResource\RelationManagers;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Group;
-use Filament\Infolists\Components\Grid as ComponentsGrid;
 use Filament\Pages\Dashboard\Actions\FilterAction;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
@@ -55,10 +51,11 @@ class DaftarPerawatanResource extends Resource
                             ->hint('Masukkan tanggal permintaan'),
 
                         Select::make('kendaraan_spesifikasi_id')
-                            ->relationship('kendaraan_spesifikasi', 'plat_nomor')
+                            ->searchable()
+                            ->relationship('kendaraan_spesifikasi', 'nopol')
                             ->label('Plat Nomor')
                             ->required()
-                            ->columnSpan(2),
+                            ->columnSpan(1),
 
                         Select::make('perawatan_jenis_id')
                             ->relationship('perawatan_jenis', 'jenis')
@@ -67,10 +64,9 @@ class DaftarPerawatanResource extends Resource
                             ->columnSpan(2),
 
                         TextInput::make('penanganan')
-                            ->label('Penanganan')
-                            ->hint('Masukkan Penanganan')
-                            ->hintColor('warning')
-                            ->columnSpan(2),
+                            ->label('Keluhan')
+                            ->placeholder('Masukkan keluhan / penanganan')
+                            ->columnSpan(1),
 
                         TextInput::make('kilometer')
                             ->label('Kilometer')
@@ -90,8 +86,15 @@ class DaftarPerawatanResource extends Resource
                             ->label('Cek sebelum tgl')
                             ->hint('Masukkan estimasi tanggal cek ulang kedepan')
                             ->hintColor('warning')
-                            ->date()
-                            ->columnSpan(2),
+                            ->date(),
+
+                        DatePicker::make('tgl_selesai')
+                            ->label('Tanggal Selesai')
+                            ->date(),
+
+                        TextInput::make('keterangan')
+                            ->label('Keterangan')
+                            ->placeholder('Masukkan Keterangan'),
 
                         FileUpload::make('foto_nota')
                             ->label('Foto Nota')
@@ -106,15 +109,20 @@ class DaftarPerawatanResource extends Resource
                             ->image()
                             ->directory('img/sparepart'),
 
-                        TextInput::make('keterangan')
-                            ->label('Keterangan')
-                            ->placeholder('Masukkan Keterangan'),
+                        TextInput::make('bengkel')
+                            ->label('Bengkel')
+                            ->placeholder('Bengkel / beli di'),
+
+                        TextInput::make('estimasi')
+                            ->label('Estimasi')
+                            ->placeholder('Estimasi harga sparepart/maintenance'),
 
                         Hidden::make('user_id')
                             ->default(Auth::user()->id),
 
-                        Hidden::make('perawatan_status_id')
-                            ->default(1),
+                        Select::make('perawatan_status_id')
+                            ->relationship('perawatan_status', 'nama')
+                            ->required(),
 
                     ])
             ]);
@@ -123,15 +131,15 @@ class DaftarPerawatanResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->paginated([50, 100, 'all'])
             ->columns([
                 TextColumn::make('tgl')
                     ->label('Tanggal')
-                    ->date('d-M-Y')
-                    // ->jalaliDate()
+                    ->date('d M Y')
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('kendaraan_spesifikasi.plat_nomor')
+                TextColumn::make('kendaraan_spesifikasi.nopol')
                     ->label('Nopol')
                     ->sortable()
                     ->searchable(),
@@ -144,6 +152,7 @@ class DaftarPerawatanResource extends Resource
                 TextColumn::make('penanganan')
                     ->label('Penanganan')
                     ->sortable()
+                    ->wrap()
                     ->searchable(),
 
                 TextColumn::make('kilometer')
@@ -158,13 +167,13 @@ class DaftarPerawatanResource extends Resource
 
                 TextColumn::make('tgl_cek_ulang')
                     ->label('Cek Sebelum Tgl')
-                    ->date()
+                    ->date('d M Y')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('tgl_selesai')
                     ->label('Tanggal Selesai')
-                    ->date()
+                    ->date('d M Y')
                     ->sortable()
                     ->searchable(),
 
@@ -172,19 +181,41 @@ class DaftarPerawatanResource extends Resource
 
                 ImageColumn::make('foto_sparepart'),
 
+                TextColumn::make('bengkel')
+                    ->label('Bengkel/beli di')
+                    ->wrap()
+                    ->sortable()
+                    ->searchable(),
+
                 TextColumn::make('keterangan')
                     ->label('Keterangan')
+                    ->wrap()
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('perawatan_status.nama')
-                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Selesai' => 'success',
+                        'Diajukan' => 'gray',
+                        'Sedang dikerjakan' => 'info',
+                        'Dibatalkan' => 'primary',
+                        'Kumat' => 'danger',
+                    })
                     ->sortable()
-                    ->searchable(),
-
+                    ->searchable()
+                    ->label('Status'),
 
             ])
             ->filters([
+                Filter::make('tgl_selesai')
+                ->label('Tanggal Selesai'),
+                Filter::make('penanganan')
+                ->label('Penanganan'),
+                Filter::make('perawatan_status.nama')
+                ->label('Status'),
+                Filter::make('keterangan')
+                ->label('Keterangan'),
                 Filter::make('tgl')
                     ->label('Tanggal Masuk')
                     ->form([
@@ -222,8 +253,8 @@ class DaftarPerawatanResource extends Resource
             ])
 
             ->actions([
-                Tables\Actions\EditAction::make(),
-                DeleteAction::make(),
+                // Tables\Actions\EditAction::make(),
+                // DeleteAction::make(),
 
             ])
             ->bulkActions([

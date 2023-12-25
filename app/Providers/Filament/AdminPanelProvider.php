@@ -24,6 +24,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->spa()
+            ->brandName('Kendaraan Karunia Abadi')
             ->sidebarCollapsibleOnDesktop()
             ->topNavigation()
             ->default()

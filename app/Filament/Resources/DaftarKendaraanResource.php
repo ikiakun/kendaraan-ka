@@ -37,7 +37,7 @@ class DaftarKendaraanResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('plat_nomor')
+                TextInput::make('nopol')
                     ->unique(ignoreRecord: true)
                     ->label('Nopol')
                     ->required()
@@ -48,9 +48,9 @@ class DaftarKendaraanResource extends Resource
                     ->required()
                     ->columnSpan(1),
 
-                TextInput::make('nomor_rangka')
+                TextInput::make('nomor_seri')
                     ->unique(ignoreRecord: true)
-                    ->label('Rangka No')
+                    ->label('No Mesin')
                     ->required()
                     ->columnSpan(1),
 
@@ -96,13 +96,13 @@ class DaftarKendaraanResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('plat_nomor')
+                TextColumn::make('nopol')
                     ->label('Nopol')
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('nomor_rangka')
-                    ->label('No. Rangka')
+                TextColumn::make('nomor_seri')
+                    ->label('No. Mesin')
                     ->sortable()
                     ->searchable(),
 
@@ -117,24 +117,26 @@ class DaftarKendaraanResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('atas_nama')
-                    ->label('Atas Nama')
+                    ->label('an.')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('berlaku_stnk')
                     ->label('Berlaku STNK')
+                    ->date('d M y')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('berlaku_kir')
                     ->label('Berlaku KIR')
+                    ->date('d M y')
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('user.name')
-                    ->label('Dibuat/diubah oleh')
-                    ->sortable()
-                    ->searchable(),
+                // TextColumn::make('user.name')
+                //     ->label('Dibuat/diubah oleh')
+                //     ->sortable()
+                //     ->searchable(),
 
 
             ])
@@ -142,7 +144,7 @@ class DaftarKendaraanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
                 DeleteAction::make(),
 
             ])

@@ -24,6 +24,7 @@ return new class extends Migration
             // pemilik kendaraan
             $table->date('berlaku_stnk');
             $table->date('berlaku_kir');
+            $table->date('status')->nullable();
             $table->timestamps();
         });
     }

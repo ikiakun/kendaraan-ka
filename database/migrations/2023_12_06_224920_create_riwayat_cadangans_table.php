@@ -20,8 +20,6 @@ return new class extends Migration
             // kendaraan & driver asal
             $table->string('nopol');
             // plat nomor kendaraan yang dipinjam
-            $table->string('driver');
-            // pengguna kendaraan yang dipinjam
             $table->string('alasan');
             // alasan pindah kendaraan
             $table->string('keterangan');

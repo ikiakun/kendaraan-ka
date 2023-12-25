@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('foto_sparepart')->nullable();
             $table->string('keterangan')->nullable();
             $table->string('estimasi')->nullable();
+            $table->string('bengkel')->nullable();
             $table->timestamps();
         });
     }

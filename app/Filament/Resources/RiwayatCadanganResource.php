@@ -37,20 +37,21 @@ class RiwayatCadanganResource extends Resource
                 Select::make('kendaraan_spesifikasi_id')
                 ->required()
                 ->relationship('kendaraan_spesifikasi', 'plat_nomor')
-                ->label('Nopol Kendaraan Asal'),
+                ->label('Nopol kendaraan yang dipinjam'),
 
-                Select::make('nopol')
-                ->options(KendaraanSpesifikasi::all()->pluck('plat_nomor', 'id'))
-                ->label('Nopol kendaraan dipakai'),
+                Select::make('driver')
+                ->options(KendaraanSpesifikasi::all()->pluck('driver', 'id'))
+                ->label('Driver yang meminjam'),
 
-                TextInput::make('driver')
-                ->label('Driver kendaraan yang dipakai'),
+                // TextInput::make('nopol')
+                // ->label(' kendaraan yang dipakai'),
 
                 TextInput::make('alasan')
                 ->label('Alasan pindah'),
 
                 TextInput::make('keterangan')
-                ->label('keterangan'),
+                ->label('keterangan')
+                ->columnSpan(2),
 
             ]);
     }
