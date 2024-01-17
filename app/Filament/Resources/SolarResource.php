@@ -8,6 +8,7 @@ use Filament\Tables;
 use App\Models\Solar;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use App\Models\HitunganSolar;
 use Filament\Resources\Resource;
 use App\Models\KendaraanSpesifikasi;
@@ -66,6 +67,7 @@ class SolarResource extends Resource
                 TextInput::make('kilometer_akhir')
                     ->label('Kilometer Akhir')
                     ->suffix('KM')
+                    ->reactive()
                     ->afterStateUpdated(function (\Filament\Forms\Set $set, $state, $get){
                         $kilometer_awal = $get('kilometer_awal');
                         $jarak = $state - $kilometer_awal;
