@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('kendaraan_spesifikasis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('kendaraan_jenis_id')->constrained('kendaraan_jenis')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('plat_nomor');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('kendaraan_jenis_id')->constrained('kendaraan_jenis');
+            $table->string('nopol');
             $table->string('driver');
-            $table->string('nomor_rangka');
+            $table->string('nomor_seri');
             $table->integer('tahun')->nullable();
             // tahun pembuatan
             $table->string('atas_nama')->nullable();

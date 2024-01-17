@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('perawatans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('kendaraan_spesifikasi_id')->constrained('kendaraan_spesifikasis')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('perawatan_jenis_id')->constrained('perawatan_jenis')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('perawatan_status_id')->constrained('perawatan_statuses')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users');
+            // $table->foreignId('kendaraan_spesifikasi_id')->constrained('kendaraan_spesifikasis')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('nopol')->nullable();
+            $table->string('driver')->nullable();
+            $table->foreignId('perawatan_jenis_id')->constrained('perawatan_jenis');
+            $table->foreignId('perawatan_status_id')->constrained('perawatan_statuses');
             $table->string('penanganan');
             $table->date('tgl');
             $table->date('tgl_cek_ulang')->nullable();

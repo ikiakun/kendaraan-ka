@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Filament\Resources\RiwayatCadanganResource\Pages;
+namespace App\Filament\Resources\SolarResource\Pages;
 
-use App\Filament\Resources\RiwayatCadanganResource;
+use App\Filament\Resources\SolarResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditRiwayatCadangan extends EditRecord
+class EditSolar extends EditRecord
 {
-    protected static string $resource = RiwayatCadanganResource::class;
+    protected static string $resource = SolarResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
+            Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
         ];
     }

@@ -8,11 +8,18 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use App\Models\Perawatan;
 use Filament\Tables\Table;
+use Faker\Provider\ar_EG\Text;
+use Pages\ViewDaftarPerawatan;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
+use App\Models\KendaraanSpesifikasi;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
@@ -20,13 +27,13 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Pages\Dashboard\Actions\FilterAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\DaftarPerawatanResource\Pages;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Resources\DaftarPerawatanResource\RelationManagers;
-use Filament\Pages\Dashboard\Actions\FilterAction;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\Filter;
 
 class DaftarPerawatanResource extends Resource
 {
@@ -48,12 +55,21 @@ class DaftarPerawatanResource extends Resource
                         DatePicker::make('tgl')
                             ->label('Tanggal')
                             ->required()
-                            ->hint('Masukkan tanggal permintaan'),
+                            ->columnSpan(2)
+                            ->hint('Masukkan tanggal permintaan')
+                            ->default(now()),
 
-                        Select::make('kendaraan_spesifikasi_id')
+                        Select::make('nopol')
                             ->searchable()
-                            ->relationship('kendaraan_spesifikasi', 'nopol')
+                            ->options(KendaraanSpesifikasi::all()->pluck('nopol', 'nopol'))
                             ->label('Plat Nomor')
+                            ->required()
+                            ->columnSpan(1),
+
+                        Select::make('driver')
+                            ->searchable()
+                            ->options(KendaraanSpesifikasi::all()->pluck('driver', 'driver'))
+                            ->label('Driver')
                             ->required()
                             ->columnSpan(1),
 
@@ -134,29 +150,29 @@ class DaftarPerawatanResource extends Resource
             ->paginated([50, 100, 'all'])
             ->columns([
                 TextColumn::make('tgl')
-                    ->label('Tanggal')
+                    ->label('TANGGAL')
                     ->date('d M Y')
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('kendaraan_spesifikasi.nopol')
-                    ->label('Nopol')
+                TextColumn::make('nopol')
+                    ->label('NOPOL')
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('kendaraan_spesifikasi.driver')
-                    ->label('Driver')
+                TextColumn::make('driver')
+                    ->label('DRIVER')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('penanganan')
-                    ->label('Penanganan')
+                    ->label('PENANGANAN')
                     ->sortable()
                     ->wrap()
                     ->searchable(),
 
                 TextColumn::make('kilometer')
-                    ->label('Kilometer Baru')
+                    ->label('KILOMETER')
                     ->sortable()
                     ->searchable(),
 
@@ -172,7 +188,7 @@ class DaftarPerawatanResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('tgl_selesai')
-                    ->label('Tanggal Selesai')
+                    ->label('TANGGAL SELESAI')
                     ->date('d M Y')
                     ->sortable()
                     ->searchable(),
@@ -182,13 +198,13 @@ class DaftarPerawatanResource extends Resource
                 ImageColumn::make('foto_sparepart'),
 
                 TextColumn::make('bengkel')
-                    ->label('Bengkel/beli di')
+                    ->label('BENGKEL / BELI DI')
                     ->wrap()
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('keterangan')
-                    ->label('Keterangan')
+                    ->label('KETERANGAN')
                     ->wrap()
                     ->sortable()
                     ->searchable(),
@@ -204,18 +220,18 @@ class DaftarPerawatanResource extends Resource
                     })
                     ->sortable()
                     ->searchable()
-                    ->label('Status'),
+                    ->label('STATUS'),
 
             ])
             ->filters([
                 Filter::make('tgl_selesai')
-                ->label('Tanggal Selesai'),
+                    ->label('Tanggal Selesai'),
                 Filter::make('penanganan')
-                ->label('Penanganan'),
+                    ->label('Penanganan'),
                 Filter::make('perawatan_status.nama')
-                ->label('Status'),
+                    ->label('Status'),
                 Filter::make('keterangan')
-                ->label('Keterangan'),
+                    ->label('Keterangan'),
                 Filter::make('tgl')
                     ->label('Tanggal Masuk')
                     ->form([
@@ -255,6 +271,7 @@ class DaftarPerawatanResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
                 // DeleteAction::make(),
+                ViewAction::make(),
 
             ])
             ->bulkActions([
@@ -263,6 +280,58 @@ class DaftarPerawatanResource extends Resource
                     ExportBulkAction::make(),
 
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('tgl')
+                    ->label('Tanggal')
+                    ->date('d M y')
+                    ->columnSpanFull(),
+
+                TextEntry::make('nopol')
+                    ->label('Nopol'),
+
+                TextEntry::make('driver')
+                    ->label('Driver'),
+
+                TextEntry::make('penanganan')
+                    ->label('Keluhan')
+                    ->limit(150)
+                    ->columnSpanFull(),
+
+                TextEntry::make('kilometer_cek_ulang')
+                    ->label('Cek KM Sebelum'),
+
+                TextEntry::make('tgl_cek_ulang')
+                    ->label('Cek TANGGAL Sebelum')
+                    ->date('d M y'),
+
+                ImageEntry::make('foto_nota'),
+                ImageEntry::make('foto_sparepart'),
+
+                TextEntry::make('bengkel')
+                    ->label('Bengkel'),
+
+                TextEntry::make('keterangan')
+                    ->label('Keterangan'),
+
+                TextEntry::make('perawatan_status.nama')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Selesai' => 'success',
+                        'Diajukan' => 'gray',
+                        'Sedang dikerjakan' => 'info',
+                        'Dibatalkan' => 'primary',
+                        'Kumat' => 'danger',
+                    })
+
+
+
             ]);
     }
 
@@ -278,6 +347,7 @@ class DaftarPerawatanResource extends Resource
         return [
             'index' => Pages\ListDaftarPerawatans::route('/'),
             'create' => Pages\CreateDaftarPerawatan::route('/create'),
+            // 'view' => Pages\ViewDaftarPerawatan::route('/{record}'),
             'edit' => Pages\EditDaftarPerawatan::route('/{record}/edit'),
         ];
     }

@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->date('tgl');
             // tanggal dipinjam
-            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('kendaraan_spesifikasi_id')->constrained('kendaraan_spesifikasis')->cascadeOnUpdate()->cascadeOnDelete();
-            // kendaraan & driver asal
+            $table->foreignId('user_id')->constrained('users');
+            // $table->string('admin');
             $table->string('nopol');
             // plat nomor kendaraan yang dipinjam
-            $table->string('alasan');
+            $table->string('driver');
+            // driver yang meminjam
+            $table->string('alasan')->nullable();
             // alasan pindah kendaraan
-            $table->string('keterangan');
+            $table->string('keterangan')->nullable();
             // tambahan
             $table->timestamps();
         });

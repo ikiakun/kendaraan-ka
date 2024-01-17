@@ -8,6 +8,7 @@ use App\Models\KendaraanSpesifikasi;
 use App\Models\RiwayatCadangan;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -17,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class RiwayatCadanganResource extends Resource
 {
@@ -31,27 +33,32 @@ class RiwayatCadanganResource extends Resource
         return $form
             ->schema([
                 DatePicker::make('tgl')
-                ->required()
-                ->label('Tanggal Keluar'),
+                    ->required()
+                    ->label('Tanggal Keluar')
+                    ->default(now()),
 
-                Select::make('kendaraan_spesifikasi_id')
-                ->required()
-                ->relationship('kendaraan_spesifikasi', 'plat_nomor')
-                ->label('Nopol kendaraan yang dipinjam'),
+                Select::make('nopol')
+                    ->required()
+                    ->options(KendaraanSpesifikasi::all()->pluck('nopol', 'nopol'))
+                    ->searchable()
+                    ->label('Nopol kendaraan yang dipinjam'),
 
                 Select::make('driver')
-                ->options(KendaraanSpesifikasi::all()->pluck('driver', 'id'))
-                ->label('Driver yang meminjam'),
-
-                // TextInput::make('nopol')
-                // ->label(' kendaraan yang dipakai'),
+                    ->options(KendaraanSpesifikasi::all()->pluck('driver', 'driver'))
+                    ->required()
+                    ->searchable()
+                    ->label('Driver yang meminjam'),
 
                 TextInput::make('alasan')
-                ->label('Alasan pindah'),
+                    ->label('Alasan pindah')
+                    ->required(),
 
                 TextInput::make('keterangan')
-                ->label('keterangan')
-                ->columnSpan(2),
+                    ->label('keterangan')
+                    ->columnSpan(2),
+
+                Hidden::make('user_id')
+                    ->default(Auth::user()->id)
 
             ]);
     }
@@ -61,14 +68,30 @@ class RiwayatCadanganResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('tgl')
-                ->label('Tanggal dipakai')
-                ->searchable()
-                ->sortable(),
+                    ->label('Tanggal dipakai')
+                    ->date('d M y')
+                    ->searchable()
+                    ->sortable(),
 
-                TextColumn::make('kendaraan_spesifikasi.nopol')
-                ->label('Nopol Asal')
-                ->searchable()
-                ->sortable()
+                TextColumn::make('nopol')
+                    ->label('Nopol Kendaraan Cadangan')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('driver')
+                    ->label('Driver yang Bawa')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('alasan')
+                    ->label('Alasan Pinjam')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('keterangan')
+                    ->label('Keterangan')
+                    ->searchable()
+                    ->sortable(),
 
             ])
             ->filters([
