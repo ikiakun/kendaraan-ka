@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('hitungan_solars', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('kendaraan_spesifikasi_id')->constrained('kendaraan_spesifikasis')->cascadeOnDelete()->cascadeOnDelete();
+            $table->foreignId('kendaraan_spesifikasi_id')->constrained('kendaraan_spesifikasis');
             $table->string('driver');
-            $table->string('nopol');
+            // $table->string('nopol');
             $table->foreignId('user_id')->constrained('users');
             $table->date('tgl_awal');
             $table->date('tgl_akhir')->nullable();

@@ -25,4 +25,8 @@ class KendaraanSpesifikasi extends Model
     public function riwayat_cadangan() {
         return $this->hasMany(RiwayatCadangan::class);
     }
+
+    public function hitungan_solar() {
+        return $this->hasMany(HitunganSolar::class);
+    }
 }

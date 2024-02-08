@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SolarResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SolarResource\RelationManagers;
+use Filament\Support\RawJs;
 
 class SolarResource extends Resource
 {
@@ -33,9 +34,9 @@ class SolarResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('nopol')
+                Select::make('kendaraan_spesifikasi_id')
                     ->searchable()
-                    ->options(KendaraanSpesifikasi::all()->pluck('nopol', 'nopol'))
+                    ->options(KendaraanSpesifikasi::all()->pluck('nopol', 'id'))
                     ->required()
                     ->label('NOPOL')
                     ->columnSpan(1),
@@ -58,24 +59,34 @@ class SolarResource extends Resource
                     ->date()
                     ->columnSpan(1),
 
-                TextInput::make('kilometer_awal')
+                TextInput::make('kilometer awal')
                     ->label('Kilometer Awal')
                     ->suffix('KM')
                     ->required()
                     ->columnSpan(1),
 
-                TextInput::make('kilometer_akhir')
+                TextInput::make('kilometer akhir')
                     ->label('Kilometer Akhir')
                     ->suffix('KM')
                     ->reactive()
                     ->afterStateUpdated(function (\Filament\Forms\Set $set, $state, $get){
-                        $kilometer_awal = $get('kilometer_awal');
+                        $kilometer_awal = $get('kilometer awal');
                         $jarak = $state - $kilometer_awal;
-                        $set('jarak', Str::slug($jarak));
+                        $jatah = 0;
+                        $nopol = KendaraanSpesifikasi::where($get('nopol', 'id'))->first();
+                        if ($nopol->kendaraan_jenis_id == 1) {
+                            $jatah = ($state - $kilometer_awal) / 6;
+                        } elseif ($nopol->kendaraan_jenis_id == 2) {
+                            $jatah = ($state - $kilometer_awal) / 12;
+                        } elseif ($nopol->kendaraan_jenis_id == 3) {
+                            $jatah = ($state - $kilometer_awal) / 10;
+                        } else {$jatah = ($state - $kilometer_awal) / 3;}
+                        $set('kilometer jarak', Str::slug($jarak));
+                        $set('solar_akhir', Str::slug($jatah));
                     })
                     ->columnSpan(1),
 
-                TextInput::make('jarak')
+                TextInput::make('kilometer jarak')
                     ->label('Jarak Total')
                     ->suffix('KM')
                     ->columnSpan(2)
@@ -89,6 +100,10 @@ class SolarResource extends Resource
                 TextInput::make('solar_akhir')
                     ->label('Jatah Solar')
                     ->suffix('L')
+                    // ->mask(RawJs::make(<<<'JS'
+                    //     ->decimalPlaces(2),
+                    //     ->decimalSeparator(,)
+                    // JS))
                     ->numeric()
                     ->readOnly(),
 
